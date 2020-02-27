@@ -1,17 +1,23 @@
-const menu = document.getElementsByClassName('menu')[0];
+const open = document.getElementById('open');
 
-function toggle() {
+const menu = document.querySelector('.menu');
+const close = document.querySelector('#close');
+const wrapper = document.querySelector('.menu-wrapper');
+
+function toggleMenu() {
   menu.classList.toggle('menu--open');
 }
-document.getElementById('open')
-  .addEventListener('click', toggle);
 
-document.getElementById('close')
-  .addEventListener('click', toggle);
+open.addEventListener('click', toggleMenu);
+
+close.addEventListener('click', toggleMenu);
+
+wrapper.addEventListener('click', toggleMenu);
 
 
-document.body.addEventListener('click', (event) => {
-  if (event.target !== menu) {
-    menu.classList.remove('menu--open');
-  }
-}, { capture: true });
+
+// document.addEventListener('click', function(event) {
+//   if (event.target !== menu && menu.classList.contains('menu--open')) {
+//     menu.classList.remove('menu--open');
+//   }
+// }, {capture: true});

@@ -1,53 +1,56 @@
-const square = document.getElementById('square');
 
-square.addEventListener('click', function() {
-  this.style.width = '100px';
-  this.style.height = '100px';
-  this.textContent = '';
+class Square {
+  constructor(arr = [2,56,6]) {
+    console.log(arr);
+    this.square = document.getElementById('square');
 
-  init();
-}, { once: true });
+    this.square.addEventListener('click', () => {
+      this._start();
+    }, {once: true});
+  }
 
+  _start() {
+    console.log('click');
+    this.square.style.width = '100px';
+    this.square.style.height = '100px';
+    this.square.textContent = '';
+    setTimeout(() => {
+      this.square.style.transition = 'all 0s';
+    }, 300)
 
-function moveSquare(event) {
-  let { x, y } = event;
+    // requestAnimationFrame
+    const moveCallback = (event) => {
+      this._move(event);
+    };
 
-  const halfSquare = 50;
-  if (x < halfSquare) x = halfSquare;
-  if (x > window.innerWidth - halfSquare) x = window.innerWidth - halfSquare;
-  square.style.left = x + 'px';
+    this.square.addEventListener('mousedown', () => {
+      document.addEventListener('mousemove', moveCallback);
+    });
 
-  if (y < halfSquare) y = halfSquare;
-  if (y > window.innerHeight - halfSquare) y = window.innerHeight - halfSquare;
-  square.style.top = y + 'px';
-}
+    document.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', moveCallback);
+    });
+  }
 
-function init() {
-  square.addEventListener('mousedown', function() {
-    document.addEventListener('mousemove', moveSquare);
-  });
-  document.addEventListener('mouseup', function() {
-    document.removeEventListener('mousemove', moveSquare);
-  });
-
-  square.addEventListener('keydown', (event) => {
-    const leftCode = 37;
-    const upCode = 38;
-    const rightCode = 39;
-    const downCode = 40;
-    switch (event.keyCode) {
-      case leftCode:
-        moveSquare({x: square.offsetLeft - 20, y: square.offsetTop});
-        break;
-      case upCode:
-        moveSquare({x: square.offsetLeft, y: square.offsetTop - 20});
-        break;
-      case rightCode:
-        moveSquare({x: square.offsetLeft + 20, y: square.offsetTop});
-        break;
-      case downCode:
-        moveSquare({x: square.offsetLeft, y: square.offsetTop + 20});
-        break;
+  _move(event) {
+    if (window.innerHeight > event.y + 50 && 0 < event.y - 50) {
+      this.square.style.top = event.y + 'px';
     }
-  })
+    if (window.innerWidth > event.x + 50) {
+      this.square.style.left = event.x + 'px';
+    }
+  }
+
 }
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  new Square();
+});
+

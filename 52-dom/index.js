@@ -1,87 +1,81 @@
-const input = document.getElementById('input');
+// console.dir(btn);
 
-input.addEventListener('focus', function(event) {
-  console.log('event: ', event);
-  input.after('I know you password: ', event.target.value);
-  console.log('change');
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// btn.onclick = function() {
+//   console.log('click 1');
+// }
 
 // const btn = document.getElementById('button');
 
-
-
-// btn.addEventListener('click', function(event) {
-//   console.log('event: ', event);
-//   event.preventDefault();
-//   console.log('click 1');
-// });
-
-// const clickEvent = new Event('click');
-// // console.log('clickEvent: ', clickEvent);
-
-// btn.dispatchEvent(clickEvent);
-
-// const div2 = document.getElementById('div2');
-
-// div2.addEventListener('click', (event) => {
-//   event.stopPropagation();
-//   div2.style.background = 'green';
-// })
-
-// const div1 = document.getElementById('div1');
-
-// div1.addEventListener('click', () => {
-//   div1.style.background = 'yellow';
-// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// document.addEventListener('contextmenu', function(event) {
-//   event.stopPropagation();
-
-//   console.log('contextmenu');
-// });
-
-
-// let counter = 0;
-// function listener2() {
-//   console.log('click 2');
-//   counter++;
-//   if (counter > 5) {
-//     btn.removeEventListener('click', listener2);
-//   }
+// function logClick(msg) {
+//   console.log(msg + ' click 2');
 // }
 
-// btn.addEventListener('click', listener2);
+// const logWrapper = logClick.bind(null, 'adsfdsf');
+
+// document.getElementById('add')
+//   .addEventListener('click', function() {
+//     btn.addEventListener('click', logWrapper);
+//   });
+
+// document.getElementById('remove')
+//   .addEventListener('click', function() {
+//     btn.removeEventListener('click', logWrapper);
+//   });
 
 
+// document.getElementById('click-once')
+//   .addEventListener('click', function(event) {
+//     this.textContent = 'dfsfs';
+//     // console.log('event: ', event);
+//     console.log('Once');
+//   }, { once: true });
+
+// document.getElementById('click-once')
+//   .addEventListener('click', function(event) {
+//     // console.log('test1', event.target === this);
+//     // console.log('event1: ', event);
+//     console.log('btn click');
+//   });
+
+// document.querySelector('.container')
+//   .addEventListener('click', function(event) {
+//     // console.log('test2', event.target === this);
+//     // console.log('event2: ', event);
+//     console.log('container click');
+//   }, { capture: true });
 
 
+let squares = document.getElementsByClassName('square');
+
+[...squares].forEach(square => {
+  square.addEventListener('click', function(event) {
+    event.stopPropagation();
+    this.style.background = 'red';
+  });
+})
+
+document.querySelector('.wrapper')
+  .addEventListener('click', function(event) {
+    // event.target.style.background = 'red';
+    console.log('click');
+    // console.log('event: ', event.target);
+  });
+
+document.querySelector('.link')
+  .addEventListener('click', function(event) {
+    event.preventDefault();
+    console.log('link click');
+  })
+
+document.getElementById('pass-input')
+  .addEventListener('keypress', function(event) {
+      console.log('keypress');
+      if (this.value === 'ivan') {
+        this.after('access granted')
+      }
+  });
+
+document.getElementById('pass-input')
+.addEventListener('keydown', function(event) {
+    console.log('keydown');
+});
