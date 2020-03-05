@@ -1,83 +1,124 @@
-// get users -> 
-// GET https://jsonplaceholder.typicode.com/users?search=Ihor&limit=20
-// get user -> GET https://jsonplaceholder.typicode.com/users?id=212312
-// get user -> GET https://jsonplaceholder.typicode.com/users/212312
-// create user -> POST https://jsonplaceholder.typicode.com/users
-// update user -> PUT https://jsonplaceholder.typicode.com/users/212312
-// delete user -> DELETE https://jsonplaceholder.typicode.com/users/212312
-
-// path variable / query params
+// GET ivan.com/users?limit=10&sort=last-name
+// GET ivan.com/users/{id}
+// path variable - :id {id}
+// POST ivan.com/users - create user
+// PUT ivan.com/users/{id} - update user
+// DELETE ivan.com/users/{id} - delete user
 
 
-const API = 'https://jsonplaceholder.typicode.com/';
+// localStorage.setItem('user', JSON.stringify({name: 'ivan'}));
+// sessionStorage.setItem('user', 'ivan');
 
-let users = [];
-const container = document.querySelector('.users');
-const nameEl = document.querySelector('#name');
+// console.log(JSON.parse(localStorage.getItem('user')));
+async function a() {
+  try {
+    let res = await axios('https://jsonplaceholder.typicode.com/user');
+    console.log('resa: ', res.data);
+  } catch(err) {
+    console.log('erra: ', err);
+  }
+}
+
+async function f() {
+  try {
+    let res = await fetch('https://jsonplaceholder.typicode.com/user');
+    console.log('res: ', res);
+    if (!res.ok) {
+      throw 'request failed ' + res.status;
+    }
+    let data = await res.json();
+    console.log('resf: ', data);
+  } catch(err) {
+    console.log('errf: ', err);
+  }
+}
+
+
+
+
+const KEY = 'XHk1e8xUVoVSk1NXVDUnmJvkCrXbpSxLWmwW'
+const BASE = 'https://gorest.co.in/public-api'
+
+
+async function getUsers(nameFilter) {
+  try {
+    const config = {
+      headers: {'Authorization': 'Bearer ' + KEY},
+      params: {first_name: nameFilter}
+    };
+
+    const res = await axios.get(BASE + '/users', config);
+
+    return res.data.result;
+  } catch (err) {
+    console.log('something bad happened');
+    return [];
+  }
+}
+
+function renderUsers(users) {
+  const container = document.querySelector('.users');
+  container.innerHTML = '';
+
+  users.forEach(user => {
+    const userDiv = document.createElement('div');
+    userDiv.classList.add('user');
+    {/* <img class="user__img" src="${user._links.avatar.href}"> */}
+    userDiv.innerHTML = `
+      <h4>${user.first_name} ${user.last_name}</h4>
+      <h5>${user.email}</h5>
+    `;
+    container.append(userDiv);
+  })
+}
+
+function createUser(fname, lname, email) {
+  const config = {
+    method: 'POST',
+    headers: {'Authorization': 'Bearer ' + KEY},
+    data: {
+      first_name: fname,
+      last_name: lname,
+      email,
+      gender: 'male'
+    }
+  };
+
+  return axios(BASE + '/users', config).catch((err) => {
+    console.log('errr', err);
+  })
+}
+
+document.filterForm.elements.filterApply.addEventListener('click', async function(event) {
+  const val = document.filterForm.elements.filterInput.value;
+  if (!val) return;
+  
+  const users = await getUsers(val);
+  document.filterForm.elements.filterInput.value = '';
+  renderUsers(users);
+});
+
+const fnameEl = document.querySelector('#fname');
+const lnameEl = document.querySelector('#lname');
 const emailEl = document.querySelector('#email');
 const btnCreate = document.querySelector('#create');
 
-btnCreate.addEventListener('click', (event) => {
-  const user = {
-    name: nameEl.value,
-    email: emailEl.value
-  };
-  console.log('user: ', user);
-  fetch(API + 'users', {
-    method: 'POST',
-    body: JSON.stringify(user)
-  }).then((res) => {
-      return res.json(); 
-    })
-    .then((data) => {
-      user.id = data.id;
-      users.unshift(user);
-      renderUsers();
-    }).catch(err => {
-      console.log(err);
-    }) 
-})
-
-function getUsers() {
-  return fetch(API + 'users').then(res => res.json())
-    .catch(err => {
-      console.log('Cant get users', err);
-    });
-}
-
-async function deleteUser(userId) {
-  await fetch(API + 'users/' + userId, {
-    method: 'DELETE'
-  })
-  users = users.filter((user) => user.id !== userId);
-  renderUsers();
-}
-
-function renderUsers() {
-  container.innerHTML = '';
-  users.forEach((user) => {
-    const div = document.createElement('div')
-    div.className = 'user';
-    div.innerHTML = `
-      <h4>${user.name}</h4>
-      <h5>${user.email}</h5>
-    `
-    const btn = document.createElement('button');
-    btn.className = 'user__remove';
-    btn.textContent = 'X';
-
-    btn.addEventListener('click', () => {
-      deleteUser(user.id);
-    })
-    div.append(btn);
-    container.append(div);
-  })
-}
-
-getUsers().then(data => {
-  users = data;
-  console.log('users: ', users);
-  renderUsers();
+btnCreate.addEventListener('click', () => {
+  if (fnameEl.value && lnameEl.value && emailEl.value) {
+    createUser(fnameEl.value, lnameEl.value, emailEl.value)
+      .then(() => {
+        fnameEl.value = '';
+        lnameEl.value = '';
+        emailEl.value = '';
+      });
+  }
 });
+
+getUsers().then((users) => {
+  renderUsers(users);
+});
+// getUsers().then(renderUsers)
+
+
 
 
